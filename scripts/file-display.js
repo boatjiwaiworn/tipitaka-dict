@@ -78,7 +78,7 @@ export class FileDisplay {
     refresh() { // change script, abbre and pageTags
         this.root.empty().attr('script', this.script);
         //this.root.append($('<div/>').text(JSON.stringify(this.collection)));
-        const lines = TextProcessor.basicConvert(this.data, this.script).split('\r\n');
+        const lines = TextProcessor.basicConvert(this.data, this.script).split(/\r?\n/);
         lines.forEach((line, ind) => {
             this.root.append(this.getDivForLine(line, ind));
         });
