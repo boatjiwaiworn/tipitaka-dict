@@ -3,6 +3,7 @@ package dict
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/pnfo/tipitaka-go/server/backend"
 )
@@ -22,8 +23,8 @@ type DictMatch struct {
 }
 
 // Search Dictionaries
-// Search Dictionaries
 func RunQuery(q DictQuery) (map[string]interface{}, error) {
+	q.Word = strings.TrimSpace(q.Word)
 	fmt.Printf("Dict Search: word='%s', dictionaries=%v, limit=%d\n", q.Word, q.Dictionaries, q.Limit)
 	allMatches := []DictMatch{} // Initialize as empty slice to avoid null in JSON
 

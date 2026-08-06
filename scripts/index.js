@@ -70,6 +70,14 @@ const lookupCallback = (word, type) => { // callback to set the search lookup fr
 };
 paliAnalysis.init(vManager, dictClient, lookupCallback);
 
+// Feature 3: selection popup → show analysis window in current reading pane (NOT navigate away)
+paliAnalysis.setSearchCallback(word => {
+    paliAnalysis.showWindowForWord(word);
+});
+
+
+
+
 // populating the settings pane
 // Pali Script Changing
 const paliScriptSelect = $('#pali-script-select');

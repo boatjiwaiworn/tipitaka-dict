@@ -32,7 +32,14 @@ var (
 )
 
 func getPathToFile(file string) string {
-	return filepath.Join(exePath, rootPath, file)
+	p := filepath.Join(exePath, rootPath, file)
+	if _, err := os.Stat(p); os.IsNotExist(err) {
+		parentP := filepath.Join(exePath, "..", file)
+		if _, err := os.Stat(parentP); err == nil {
+			return parentP
+		}
+	}
+	return p
 }
 
 func main() {

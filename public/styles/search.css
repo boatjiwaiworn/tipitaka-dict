@@ -324,3 +324,83 @@ w:hover {
 .breakups .sub {
     padding-right: 0.5rem;
 }
+
+/* ── Editable word input (Feature 2) ──────────────────── */
+.analysis-window .header .word-input {
+    flex: 1 1 auto;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--border-color);
+    color: var(--special-color);
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 0.1rem 0.5rem 0.1rem 1rem;
+    outline: none;
+    min-width: 80px;
+    font-family: inherit;
+}
+.analysis-window .header .word-input:focus {
+    border-bottom: 1px solid var(--link-color);
+    background: rgba(0,0,0,0.04);
+    border-radius: 3px;
+}
+
+/* ── Resize handle at top of analysis window (Feature 2) ── */
+.analysis-window .resize-handle {
+    width: 100%;
+    height: 10px;
+    cursor: ns-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2px;
+}
+.analysis-window .resize-grip {
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border-color);
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+.analysis-window .resize-handle:hover .resize-grip {
+    opacity: 1;
+    background: var(--link-color);
+}
+
+/* ── Scrollable dict results area (Feature 2) ─────────── */
+.analysis-window .dict-scroll {
+    overflow-y: auto;
+    max-height: calc(100% - 5rem);
+    flex: 1 1 auto;
+    padding-right: 2px;
+}
+.analysis-window {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* let dict-scroll handle overflow */
+}
+
+/* ── Text-selection search popup (Feature 3) ──────────── */
+#sel-search-popup {
+    display: none;
+    position: absolute;
+    z-index: 9999;
+    background: var(--link-color, #c0392b);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    transition: transform 0.1s, box-shadow 0.1s;
+    white-space: nowrap;
+}
+#sel-search-popup:hover {
+    transform: scale(1.06);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+#sel-search-popup:active {
+    transform: scale(0.97);
+}

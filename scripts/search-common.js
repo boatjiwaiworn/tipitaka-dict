@@ -138,7 +138,10 @@ export class SearchPane {
         return searchBarVal.replace(/\s+/g, ' ').replace(/[\d\,\.\*!;"‘’“”–<>=\:\[\]¶\(\)]/g, '');
     }
     checkMinQueryLength(wordSinh) {
-        if ((wordSinh.match(/[අ-ෆ]/g) || []).length < this.settings.minQueryLength) { // count the number of consos
+        // Count ALL Sinhala Unicode chars: consonants + vowel marks (DCF-DDF) + niggahita (D82)
+        // Old: /[අ-ෆ]/g  only counted consonants (U+0D85-U+0DC6), blocking short words like "ปู" or "กิํ"
+        const count = (wordSinh.match(/[\u0D80-\u0DFF]/g) || []).length;
+        if (count < this.settings.minQueryLength) {
             this.setStatus(UT('enter-more-characters', this.settings.minQueryLength));
             return false;
         }

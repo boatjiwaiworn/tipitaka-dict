@@ -30,6 +30,12 @@ const dictionaryList = new Map([
     ['th-dhamma-cheti-1', [Language.THAI, 'กิริยากิตก์ฉบับธรรมเจดีย์', { s: 'DC1', v: 1, o: 'online pdf', n: 5922, g: true }]], // TODO combine 1 & 2
     ['th-dhamma-cheti-2', [Language.THAI, 'กิริยาอาขยาตฉบับธรรมเจดีย์', { s: 'DC2', v: 1, o: 'online pdf', n: 4272, g: true }]],
     ['th-bhumibol', [Language.THAI, 'PTS Bhumibol', { s: 'BB', v: 1, o: 'online pdf', n: 16143, g: true }]],
+    ['th-ng', [Language.THAI, 'บาลีไทย ฉบับใหม่ (NG)', { s: 'NG', v: 1, o: 'pali-thai-dictionary.onrender.com', g: true }]],
+    ['th-dmc', [Language.THAI, 'พจนานุกรมธรรม (DMC)', { s: 'DMC', v: 1, o: 'pali-thai-dictionary.onrender.com', g: true }]],
+    ['th-thatu', [Language.THAI, 'ธาตุปทีปิกา ๑ (THATU)', { s: 'THT', v: 1, d: 'ธาตุปทีปิกา เล่มที่ ๑ หมวดภู จุร ตนา ฯลฯ', o: 'pali-thai-dictionary.onrender.com', g: true }]],
+    ['th-thatu2', [Language.THAI, 'ธาตุปทีปิกา ๒ (THATU2)', { s: 'THT2', v: 1, d: 'ธาตุปทีปิกา เล่มที่ ๒ หมวดจุร เณ ฯลฯ', o: 'pali-thai-dictionary.onrender.com', g: true }]],
+    ['th-pd', [Language.THAI, 'ไทย→บาลี (PD)', { s: 'PD', v: 1, d: 'พจนานุกรมไทย-บาลี ค้นหาคำบาลีจากคำไทย', o: 'pali-thai-dictionary.onrender.com', g: true }]],
+    ['th-ps', [Language.THAI, 'ไทย→บาลี สมาส (PS)', { s: 'PS', v: 1, d: 'พจนานุกรมไทย-บาลี (สมาส) ค้นหาคำบาลีจากคำไทย', o: 'pali-thai-dictionary.onrender.com', g: true }]],
 
     ['ch-suttacentral', [Language.CHINESE, 'SC Chinese', { s: 'SC', v: 2, d: 'SuttaCentral Chinese Dictionary', o: 'Projector' }]],
     ['hi-vri', [Language.HI, 'VRI Hindi', { s: 'VR', v: 2, o: 'cst windows software', n: 16183 }]],
@@ -103,18 +109,72 @@ export class DictionaryClient extends SearchPane {
         this.requestTimer = setTimeout(() => this.searchWord(), this.settings.searchDelay);
     }
 
+    /** Convert word to fuzzy subsequence LIKE pattern: "กาར" → "%ก%า%ར%"
+     *  This lets the backend find words where chars appear in typed order (non-consecutive ok)
+     *  Rules:
+     *  - Already has % or _  →  pass through unchanged (user's own wildcard)
+     *  - Word has < 2 chars  →  pass through (prefix search is fine)
+     *  - Otherwise           →  wrap with % and join chars with %
+     */
+    _fuzzyTerm(word) {
+        if (!word) return word;
+        if (word.includes('%') || word.includes('_')) return word; // already has wildcards
+        const chars = [...word]; // split on unicode codepoints (not bytes)
+        if (chars.length < 2) return word;
+        return '%' + chars.join('%') + '%';
+    }
+
     async searchWord() {
         this.setBusySearching(true); // visual indication of search running
-        const response = await this.queryWord(this.prevWordSinh, this.settings.maxMatches);
-        this.setBusySearching(false);
-        if (response) { // in case server error
-            this.displayResponse(response);
+
+        // Apply fuzzy transform: "กาར" → "%ก%า%ར%" so partial input still finds results
+        const sinhFuzzy = this._fuzzyTerm(this.prevWordSinh);
+        const queries = [this.queryWord(sinhFuzzy, this.settings.maxMatches)];
+
+        // Dual search: also send original Thai directly (for PD/PS Thai-headword dicts)
+        const needDualSearch = this.prevWord && this.prevWord !== this.prevWordSinh
+            && this.prevWord.length >= 2;
+        if (needDualSearch) {
+            const thFuzzy = this._fuzzyTerm(this.prevWord);
+            queries.push(this.queryWord(thFuzzy, this.settings.maxMatches));
         }
+
+        const results = await Promise.all(queries);
+        this.setBusySearching(false);
+
+        const primary = results[0];
+        if (!primary) return;
+
+        // Merge Thai-direct results (dedup by dictName+word)
+        if (results[1]) {
+            const seen = new Set(primary.matches.map(m => m.dictName + '\x00' + m.word));
+            for (const m of results[1].matches) {
+                const key = m.dictName + '\x00' + m.word;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    primary.matches.push(m);
+                }
+            }
+        }
+
+        this.displayResponse(primary);
     }
 
     async searchWordInline(word) {
-        word = TextProcessor.convertFromMixed(word); // convert to sinhala before searching
-        const response = await this.queryWord(word, this.settings.maxMatchesInline);
+        const wordSinh = TextProcessor.convertFromMixed(word); // convert to sinhala before searching
+        // Use fuzzy for inline too (single-word lookup, exact first via Levenshtein sort)
+        const sinhFuzzy = this._fuzzyTerm(wordSinh);
+        const response = await this.queryWord(sinhFuzzy, this.settings.maxMatchesInline);
+        // Also search original if Thai (for PD/PS)
+        if (word !== wordSinh) {
+            const resp2 = await this.queryWord(this._fuzzyTerm(word), this.settings.maxMatchesInline);
+            if (resp2 && resp2.matches.length) {
+                const seen = new Set(response.matches.map(m => m.dictName + '\x00' + m.word));
+                for (const m of resp2.matches) {
+                    if (!seen.has(m.dictName + '\x00' + m.word)) response.matches.push(m);
+                }
+            }
+        }
         return { matches: this.renderMatches(response.matches), breakups: this.renderBreakups(response.breakups) };
     }
 

@@ -8,7 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 type QueryPayload struct {
@@ -41,7 +41,7 @@ func GetDB(dbName string) (*sqlx.DB, error) {
 	}
 
 	dbPath := getDBPath(dbName)
-	db, err := sqlx.Open("sqlite3", dbPath+"?mode=ro")
+	db, err := sqlx.Open("sqlite", dbPath)
 	if err != nil {
 		return nil, err
 	}
