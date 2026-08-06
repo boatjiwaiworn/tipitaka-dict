@@ -70,7 +70,7 @@ const lookupCallback = (word, type) => { // callback to set the search lookup fr
 };
 paliAnalysis.init(vManager, dictClient, lookupCallback);
 
-// Feature 3: selection popup → show analysis window in current reading pane (NOT navigate away)
+// Feature 3: selection popup โ’ show analysis window in current reading pane (NOT navigate away)
 paliAnalysis.setSearchCallback(word => {
     paliAnalysis.showWindowForWord(word);
 });
@@ -95,13 +95,15 @@ function onPaliScriptChange(newVal) {
         vManager.showPane('back'); // go back
     }
 }
+const allowedScripts = new Map([...appSettings.paliScriptList].filter(([k, v]) => ['th', 'ro', 'si'].includes(k)));
 new GroupedOptions(paliScriptSelect, onPaliScriptChange)
-    .render(appSettings.paliScriptList, appSettings.get('paliScript'));
+    .render(allowedScripts, appSettings.get('paliScript'));
+
 
 // UI Language related
 const uiLanguageSelect = $('#ui-lang-select');
 appSettings.uiLanguageList.forEach((val, lang) => {
-    if (val[3].t) { // only if the translation available
+    if (['th', 'en', 'si'].includes(lang) && val[3].t) { // only if the translation available
         Util.createLanguageSelectOption(lang, val).appendTo(uiLanguageSelect);
     }
 });
@@ -119,8 +121,9 @@ if (appSettings.localeSource == 'gps') { // take this from GPS
     }).catch(e => console.err(`Request to get gps country failed. ${e}`));
 }
 
+const allowedDicts = new Map([...dictClient.dictionaryList].filter(([_k, v]) => ['th', 'en', 'si'].includes(v[0])));
 new GroupedCheckOptions($('.dictionary-select'), dict => dictClient.dictionaryListChanged(dict), appSettings.uiLanguageList)
-    .render(dictClient.dictionaryList, appSettings.get('dictList'));
+    .render(allowedDicts, appSettings.get('dictList'));
 
 function changeTextSize(size) {
     $('html').css('font-size', `${size}px`);
@@ -135,9 +138,10 @@ function changeColorTheme(bodyClass) {
 
 function populateFormatSelect(formatList, select, settingName, onChangeCallback = '') {
     formatList.forEach((format, val) => {
-        const span = $('<span/>').append(UT(format[0])).addClass('name');
+        const title = UT(format[0]);
+        const span = $('<span/>').append(title).addClass('name');
         const example = $(format[1]).addClass('example');
-        $('<div/>').addClass('option').append(span, example).attr('value', val).appendTo(select);
+        $('<div/>').addClass('option').attr('title', title).append(span, example).attr('value', val).appendTo(select);
     });
     select.on('click', '.option', e => {
         const val = appSettings.set(settingName, $(e.currentTarget).attr('value'));
@@ -158,9 +162,12 @@ populateFormatSelect(appSettings.pageTagFormatList, $('#pagetag-format-select'),
 // launch pali analysis - clicking on sutta names should not open
 $(document).on('click', '.pali-analysis,.bod w,.gax w,.gae w', e => paliAnalysis.showWindow(e));
 
+$('#custom-dict-btn').on('click', () => {
+    paliAnalysis.showCustomDictDialog();
+});
+
 // apply initial settings
 LangHelper.changeTranslation(appSettings.get('uiLanguage'));
 changeTextSize(appSettings.get('textSize'));
 changeColorTheme(appSettings.get('colorTheme'));
-$('#title-bar-text').append(PT('ඡට්ඨ සංගායනා තිපිටක'));
 setSearchType(appSettings.get('searchType'));

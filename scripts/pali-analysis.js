@@ -2,6 +2,8 @@
 
 import { appSettings, LangHelper, UT, PT, PT_REFRESH, SearchType } from './settings.js';
 import { TextProcessor } from './pali-script.js';
+import { CustomDict } from './custom-dict.js';
+import { Util } from './util.js';
 
 class PaliAnalysis {
     constructor() {
@@ -104,8 +106,12 @@ class PaliAnalysis {
         const lookupIcons = Object.entries(appSettings.searchTypeProp).map(([type, prop]) => {
             return $(`<i class="${prop.iconClass} lookup-icon" word="${rawWord}" type="${type}"></i>`);
         });
+        
+        // Custom Dict Button
+        const customDictIcon = $('<i class="fas fa-plus-circle custom-dict-icon" title="พจนานุกรมเพิ่มเอง" style="cursor:pointer; margin-right: 10px; font-size: 1.1em; opacity: 0.8; color: #28a745;"></i>');
+        
         const closeIcon = $('<i class="far fa-times-circle close-icon"></i>').attr('pane', pane);
-        const headerRow = $('<div/>').addClass('header').append(lookupIcons, wordInput, closeIcon);
+        const headerRow = $('<div/>').addClass('header').append(lookupIcons, wordInput, customDictIcon, closeIcon);
 
         // Drag resize handle at top (Feature 2)
         const resizeHandle = $('<div class="resize-handle"><div class="resize-grip"></div></div>');
@@ -180,7 +186,89 @@ class PaliAnalysis {
             this.loadLookupCb(icon.attr('word'), icon.attr('type'));
         }).on('click', '.close-icon', e => {
             this.closeWindow($(e.currentTarget).attr('pane'));
+        }).on('click', '.custom-dict-icon', e => {
+            const word = window.find('.word-input').val() || window.find('.lookup-icon').first().attr('word');
+            this.showCustomDictDialog(word);
         });
+    }
+
+    showCustomDictDialog(initialWord = '') {
+        const dialogContent = $('<div/>').css({ display: 'flex', flexDirection: 'column', height: '400px' });
+        dialogContent.append(`<h3>พจนานุกรมเพิ่มเอง (Custom Dictionary)</h3>`);
+        
+        const formDiv = $('<div/>').css({ display: 'flex', gap: '10px', marginBottom: '15px', paddingBottom: '15px', borderBottom: '1px solid #ccc' });
+        const wordInput = $('<input type="text" placeholder="คำศัพท์">').css({ flex: 1 }).val(initialWord);
+        const meaningInput = $('<input type="text" placeholder="ความหมาย">').css({ flex: 2 });
+        const addBtn = $('<button>เพิ่ม</button>');
+        formDiv.append(wordInput, meaningInput, addBtn);
+        
+        const filterInput = $('<input type="text" placeholder="🔍 ค้นหาคำศัพท์ที่บันทึกไว้...">').css({ width: '100%', padding: '5px', marginBottom: '10px', boxSizing: 'border-box' });
+        
+        const listDiv = $('<div/>').css({ flex: 1, overflowY: 'auto' });
+        
+        const renderList = () => {
+            listDiv.empty();
+            let entries = CustomDict.getAll();
+            
+            const filterText = filterInput.val().trim().toLowerCase();
+            if (filterText) {
+                entries = entries.filter(e => e.word.toLowerCase().includes(filterText) || e.meaning.toLowerCase().includes(filterText));
+            }
+            
+            if (entries.length === 0) {
+                listDiv.append('<p style="color: gray;">ยังไม่มีคำศัพท์ที่เพิ่มเอง</p>');
+                return;
+            }
+            entries.forEach(entry => {
+                const itemDiv = $('<div/>').css({ display: 'flex', justifyContent: 'space-between', padding: '5px', borderBottom: '1px solid #eee' });
+                const textSpan = $('<span/>').css({ flex: 1 }).text(`${entry.word} : ${entry.meaning}`);
+                const btnSpan = $('<span/>').css({ display: 'flex', gap: '10px' });
+                
+                const editIcon = $('<i class="far fa-edit" title="แก้ไข"></i>').css({ cursor: 'pointer', color: '#007bff' });
+                const delIcon = $('<i class="far fa-trash-alt" title="ลบ"></i>').css({ cursor: 'pointer', color: '#dc3545' });
+                
+                editIcon.on('click', () => {
+                    const newWord = prompt('แก้ไขคำศัพท์:', entry.word);
+                    if (newWord === null) return;
+                    const newMeaning = prompt('แก้ไขความหมาย:', entry.meaning);
+                    if (newMeaning === null) return;
+                    if (confirm('คุณต้องการบันทึกการแก้ไขนี้ใช่หรือไม่?')) {
+                        CustomDict.edit(entry.id, newWord, newMeaning);
+                        renderList();
+                    }
+                });
+                
+                delIcon.on('click', () => {
+                    if (confirm(`คุณต้องการลบคำว่า "${entry.word}" ใช่หรือไม่?`)) {
+                        CustomDict.delete(entry.id);
+                        renderList();
+                    }
+                });
+                
+                btnSpan.append(editIcon, delIcon);
+                itemDiv.append(textSpan, btnSpan);
+                listDiv.append(itemDiv);
+            });
+        };
+        
+        addBtn.on('click', () => {
+            const w = wordInput.val().trim();
+            const m = meaningInput.val().trim();
+            if (w && m) {
+                CustomDict.add(w, m);
+                wordInput.val('');
+                meaningInput.val('');
+                renderList();
+            } else {
+                alert('กรุณากรอกทั้งคำศัพท์และความหมาย');
+            }
+        });
+        
+        renderList();
+        filterInput.on('input', renderList);
+        
+        dialogContent.append(formDiv, filterInput, listDiv);
+        Util.showDialog('generic-dialog', dialogContent);
     }
 }
 

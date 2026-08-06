@@ -66,6 +66,70 @@
     display: none;
 }
 
+/* settings-area specific */
+#settings-area {
+    padding: 20px;
+    background-color: var(--main-bcolor);
+}
+
+.settings-card {
+    background-color: var(--special-bcolor);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    text-align: left;
+}
+
+.settings-card-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--heading-color);
+    margin-top: 0;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+}
+.settings-card-title .far {
+    margin-right: 0.5rem;
+    color: var(--icon-color);
+}
+
+.custom-radio {
+    font-size: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.custom-radio .option {
+    cursor: pointer;
+    background-color: var(--main-bcolor);
+    color: var(--main-color);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.custom-radio .option:hover {
+    background-color: var(--hover-bcolor);
+}
+
+.custom-radio .option.active {
+    background-color: var(--special-color);
+    color: white;
+    border-color: var(--special-color);
+}
+
+.custom-radio.icon-only .option .name {
+    display: none;
+}
+
+
 .filter-table {
     text-align: left;
 }

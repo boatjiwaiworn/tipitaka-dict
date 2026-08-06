@@ -5,11 +5,17 @@ dev
 node_modules
 dist
 Android
-dict-all.db
+
 
 
 server/bin
-server-data/db/dict-all.db
+
 *.fiber.gz
 sign-notorize.sh
 dist-desktop
+server/server-data/
+server/dist/
+tipitaka_extracted/
+*.zip
+tipitaka-app-linux
+tipitaka-app-mac

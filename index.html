@@ -4,14 +4,14 @@
 <head lang="en">
     <meta charset="UTF-8">
     <meta name="google-site-verification" content="3q30uQ1_gO_dEVjUO6EsTgpovt8MHTyY75774HmTSb0" />
-    <title>Chattha Sangayana Tipitaka</title>
+    <title>TIPITAKA&DICT</title>
     <meta name="description"
         content="Sinhala Thai Burmese Lao Khmer Roman Devanagari - many Pali scripts with dictionaries.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="shortcut icon" href="./images/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="./images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="./images/logo.jpg" type="image/jpeg">
+    <link rel="icon" href="./images/logo.jpg" type="image/jpeg">
     <link rel="manifest" href="./json/manifest.json">
 
     <link rel="stylesheet" href="./styles/common-styles.css?v=1" />
@@ -73,10 +73,11 @@
     <div style="margin:0 auto; height: 100%; display: flex; flex-direction: column; width: 100%; text-align: center">
 
         <nav id="nav-bar" style="width: 100%; max-width: 100%;">
-            <nav class="title-bar short-screen-hide ss-hide">
+            <nav class="title-bar">
                 <div id="title-bar-text"
                     style="flex: 1 1; text-overflow: ellipsis;  white-space: nowrap;  overflow: hidden;">
-                    <!--<i class="PT" lang="ro">Chaṭṭha Saṅgāyana Tipiṭaka</i>-->
+                    <img src="./images/logo.jpg" style="height: 1.5em; vertical-align: middle; margin-right: 10px;"> 
+                    <span class="PT" style="font-weight: bold; font-family: sans-serif; font-size: 1.2em;">TIPITAKA &amp; DICT</span>
                 </div>
             </nav>
             <nav id="search-bar-div">
@@ -84,16 +85,11 @@
                         View</i></a>
                 <div
                     style="flex: 1; display: flex; justify-content: center; align-items: center; flex-flow: row nowrap; overflow: auto;">
-                    <input class="search-bar PT" type="text" placeholder=" Search">
-                    <a id="search-type-button" class="button"><i class="fal fa-search ss-hide"></i> <i
-                            class="type-icon"></i></a>
-                    <a id="text-view-button" class="button"><i class="far fa-book-open"></i> <i class="ss-hide UT"
-                            lang="en">Text</i></a>
-                    <a id="settings-button" class="button"><i class="far fa-wrench"></i> <i class="ss-hide UT"
-                            lang="en">Settings</i></a>
+                    <input class="search-bar PT" type="text" placeholder=" Search Tipitaka...">
+                    <a id="search-type-button" class="button"><i class="fal fa-search"></i> <span class="ss-hide UT" lang="en">Search Type</span></a>
+                    <a id="text-view-button" class="button"><i class="far fa-book-open"></i> <span class="ss-hide UT" lang="en">Text</span></a>
+                    <a id="settings-button" class="button"><i class="far fa-wrench"></i> <span class="ss-hide UT" lang="en">Settings</span></a>
                 </div>
-                <a id="menu-toggle" class="button"><i class="far fa-bars"></i> <i class="ss-hide UT"
-                        lang="en">Menu</i></a>
             </nav>
         </nav>
 
@@ -121,46 +117,41 @@
             </div>
 
             <div id="settings-area" class="top-pane">
-                <h2><i class="far fa-globe-asia"></i> <i class="UT" lang="en">Select User Interface Language</i><i
-                        class="help-button" sec="lang-select"></i></h2>
-                <div id="ui-lang-select" class="custom-radio"></div>
+                <div class="settings-card">
+                    <h2 class="settings-card-title"><i class="far fa-palette"></i> <i class="UT" lang="en">Appearance & Display</i></h2>
+                    
+                    <h3 style="font-size:0.9rem; margin:10px 0 5px; font-weight:normal; color:var(--icon-color);"><i class="UT" lang="en">Color Theme</i></h3>
+                    <div id="color-theme-select" class="custom-radio icon-only"></div>
 
-                <h2><i class="far fa-language"></i> <i class="UT" lang="en">Select Pali Text Display Script</i><i
-                        class="help-button" sec="script-select"></i></h2>
-                <div id="pali-script-select" class="custom-radio"></div>
+                    <h3 style="font-size:0.9rem; margin:10px 0 5px; font-weight:normal; color:var(--icon-color);"><i class="UT" lang="en">Text Size</i></h3>
+                    <div id="text-size-select" class="custom-radio icon-only"></div>
 
-                <h2><i class="far fa-palette"></i> <i class="UT" lang="en">Color Theme</i><i class="help-button"
-                        sec="color-theme-select"></i></h2>
-                <div id="color-theme-select" class="custom-radio"></div>
+                    <h3 style="font-size:0.9rem; margin:10px 0 5px; font-weight:normal; color:var(--icon-color);"><i class="UT" lang="en">Select Pali Text Display Script</i></h3>
+                    <div id="pali-script-select" class="custom-radio"></div>
 
-                <h2><i class="far fa-folders"></i> <i class="UT" lang="en">Multi File Display</i><i class="help-button"
-                        sec="tab-view-select"></i></h2>
-                <div id="tab-view-select" class="custom-radio"></div>
-
-                <h2><i class="far fa-font"></i> <i class="UT" lang="en">Text Size</i><i class="help-button"
-                        sec="text-size-select"></i></h2>
-                <div id="text-size-select" class="custom-radio"></div>
-
-                <h2><i class="far fa-comment"></i> <i class="UT" lang="en">Footnotes Format</i><i class="help-button"
-                        sec="footnotes-select"></i></h2>
-                <div id="footnote-format-select" class="custom-radio"></div>
-
-                <h2><i class="far fa-book"></i> <i class="UT" lang="en">Page Tags Format</i><i class="help-button"
-                        sec="pagetags-select"></i></h2>
-                <div id="pagetag-format-select" class="custom-radio"></div>
-
-                <h2><i class="far fa-download"></i> <i class="UT" lang="en">Download Offline Software</i><i
-                        class="help-button" sec="offline-software"></i></h2>
-                <div class="download-software-list">
-                    <a href="https://github.com/pnfo/tipitaka.app/releases" target="_blank"><img
-                            src="images/windows.png"></a>
-                    <a href="https://github.com/pnfo/tipitaka.app/releases" target="_blank"><img
-                            src="images/macos2.png"></a>
-                    <a href="https://github.com/pnfo/tipitaka.app/releases" target="_blank"><img
-                            src="images/linux.png"></a>
-                    <a href="https://play.google.com/store/apps/details?id=app.tipitaka.main" target="_blank"><img
-                            src="images/android2.png"></a>
+                    <h3 style="font-size:0.9rem; margin:10px 0 5px; font-weight:normal; color:var(--icon-color);"><i class="UT" lang="en">Multi File Display</i></h3>
+                    <div id="tab-view-select" class="custom-radio icon-only"></div>
                 </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title"><i class="far fa-book-reader"></i> <i class="UT" lang="en">Reader Options</i></h2>
+                    
+                    <h3 style="font-size:0.9rem; margin:10px 0 5px; font-weight:normal; color:var(--icon-color);"><i class="UT" lang="en">Footnotes Format</i></h3>
+                    <div id="footnote-format-select" class="custom-radio"></div>
+
+                    <h3 style="font-size:0.9rem; margin:10px 0 5px; font-weight:normal; color:var(--icon-color);"><i class="UT" lang="en">Page Tags Format</i></h3>
+                    <div id="pagetag-format-select" class="custom-radio"></div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title"><i class="far fa-globe-asia"></i> <i class="UT" lang="en">Account & Language</i></h2>
+                    
+                    <h3 style="font-size:0.9rem; margin:10px 0 5px; font-weight:normal; color:var(--icon-color);"><i class="UT" lang="en">Select User Interface Language</i></h3>
+                    <div id="ui-lang-select" class="custom-radio"></div>
+                </div>
+
+
+
             </div>
 
             <div id="title-search-area" class="top-pane"
@@ -171,7 +162,6 @@
                         <i class="UT" lang="en">For searching type the search term in the box above</i></span>
                     <a id="title-search-filter-button" class="button"><i class="far fa-filter"></i> <i
                             class="ss-hide UT" lang="en">Show/Hide Filter</i></a>
-                    <i class="help-button" sec="title-search"></i>
                 </div>
                 <div id="title-search-results" style="flex: 1 1 auto; overflow-y: auto;"></div>
             </div>
@@ -196,7 +186,6 @@
                             term in the box above</i></span>
                     <a id="fts-filter-button" class="button"><i class="far fa-filter"></i> <i class="ss-hide UT"
                             lang="en">Show/Hide Filter</i></a>
-                    <i class="help-button" sec="fts-search"></i>
                 </div>
                 <div style="flex: 1 1 auto; display: flex; flex-direction: row; flex-wrap: nowrap; min-height: 0px;">
                     <div id="fts-match-list" style="flex: 1 1 0; overflow-y: auto;"></div>
@@ -212,7 +201,7 @@
                             term in the box above</i></span>
                     <a id="dict-filter-button" class="button"><i class="far fa-books"></i> <i class="ss-hide UT"
                             lang="en">Select Dictionaries</i></a>
-                    <i class="help-button" sec="dict-search"></i>
+                    <a id="custom-dict-btn" class="button"><i class="fas fa-plus-circle" style="color: #28a745;"></i> <i class="ss-hide">เน€เธยเน€เธยเน€เธยเน€เธเธ’เน€เธยเน€เธเธเน€เธยเน€เธเธเน€เธเธเน€เธโฌเน€เธยเน€เธเธ”เน€เธยเน€เธเธเน€เธโฌเน€เธเธเน€เธย</i></a>
                 </div>
                 <div id="word-breakup" class="breakups"></div>
                 <div id="dict-results" style="flex: 1 1 auto; overflow-y: auto;"></div>
@@ -225,7 +214,6 @@
                             saved. Click the star icon to save to bookmarks.</i></span>
                     <a id="bookmarks-filter-button" class="button"><i class="far fa-filter"></i> <i class="ss-hide UT"
                             lang="en">Show/Hide Filter</i></a>
-                    <i class="help-button" sec="bookmarks"></i>
                 </div>
                 <div id="bookmarks-list" style="overflow-y: auto;"></div>
             </div>
@@ -261,3 +249,4 @@
 </body>
 
 </html>
+

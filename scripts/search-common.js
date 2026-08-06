@@ -137,11 +137,13 @@ export class SearchPane {
         // allowed wild chars % and _ (sqlite LIKE query)
         return searchBarVal.replace(/\s+/g, ' ').replace(/[\d\,\.\*!;"‘’“”–<>=\:\[\]¶\(\)]/g, '');
     }
-    checkMinQueryLength(wordSinh) {
+    checkMinQueryLength(wordSinh, wordOriginal = '') {
         // Count ALL Sinhala Unicode chars: consonants + vowel marks (DCF-DDF) + niggahita (D82)
         // Old: /[අ-ෆ]/g  only counted consonants (U+0D85-U+0DC6), blocking short words like "ปู" or "กิํ"
         const count = (wordSinh.match(/[\u0D80-\u0DFF]/g) || []).length;
-        if (count < this.settings.minQueryLength) {
+        const originalCount = wordOriginal.replace(/\s+/g, '').length;
+        
+        if (count < this.settings.minQueryLength && originalCount < this.settings.minQueryLength) {
             this.setStatus(UT('enter-more-characters', this.settings.minQueryLength));
             return false;
         }

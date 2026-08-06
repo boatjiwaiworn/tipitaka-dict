@@ -3,9 +3,9 @@
   "name": "Chatta Sangayana Tipitaka",
   "icons": [
     {
-      "src": "../images/chakra.png",
+      "src": "../images/logo.jpg",
       "sizes": "300x300",
-      "type": "image/png"
+      "type": "image/jpeg"
     }
   ],
   "start_url": "../index.html",

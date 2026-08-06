@@ -1,15 +1,18 @@
 "use strict";
 
 import { TextProcessor } from './pali-script.js';
+
 import { Language, appSettings, UT, PT } from './settings.js';
 import { JHoverDialog } from './util.js';
 import { SearchPane } from './search-common.js';
+import { CustomDict } from './custom-dict.js';
 
 import { DictionaryQuery } from './backend-adapter.js';
 //const DictionaryQuery = require('../misc/server/constants.js').DictionaryQuery;
 
 /** change the version when a new dict is available so the old one will be deleted and the new one loaded */
 const dictionaryList = new Map([
+    ['custom', ['th', 'พจนานุกรมเพิ่มเอง (Custom)', { s: 'CU', g: true }]],
     ['en-buddhadatta', [Language.EN, 'Buddhadatta Concise', { s: 'BU', v: 2, o: 'Projector', n: 20970, g: true }]],
     ['en-nyanatiloka', [Language.EN, 'Nyanatiloka Buddhist', { s: 'ND', v: 1, d: 'Buddhist Dictionary by Ven Nyanatiloka', o: 'pced stardict', g: true }]],
     ['en-pts', [Language.EN, 'PTS', { s: 'PS', v: 1, d: 'Pali Text Society Dictionary', o: 'dpr', g: true }]],
@@ -93,7 +96,7 @@ export class DictionaryClient extends SearchPane {
         // allowed wild chars % and _ (sqlite LIKE query)
         const word = SearchPane.normalizeSearchTerm(searchBarVal);
         const wordSinh = TextProcessor.convertFromMixed(word); // convert to sinhala here
-        if (!this.checkMinQueryLength(wordSinh)) return;
+        if (!this.checkMinQueryLength(wordSinh, word)) return;
 
         if (wordSinh == this.prevWordSinh) {
             return; // same as prev - check array equal
@@ -156,6 +159,12 @@ export class DictionaryClient extends SearchPane {
                 }
             }
         }
+        
+        // Merge Custom Dict results
+        const customMatches = CustomDict.search(this.prevWord);
+        if (customMatches.length > 0) {
+            primary.matches.unshift(...customMatches);
+        }
 
         this.displayResponse(primary);
     }
@@ -175,6 +184,13 @@ export class DictionaryClient extends SearchPane {
                 }
             }
         }
+        
+        // Merge Custom Dict results
+        const customMatches = CustomDict.search(word);
+        if (customMatches.length > 0) {
+            response.matches.unshift(...customMatches);
+        }
+        
         return { matches: this.renderMatches(response.matches), breakups: this.renderBreakups(response.breakups) };
     }
 

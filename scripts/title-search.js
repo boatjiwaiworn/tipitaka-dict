@@ -52,7 +52,7 @@ export class TitleSearch extends SearchPane {
     performSearch(searchBarVal) {
         const query = SearchPane.normalizeSearchTerm(searchBarVal);
         const querySinh = TextProcessor.convertFromMixed(query); // convert to sinhala here
-        if (!this.checkMinQueryLength(querySinh)) return;
+        if (!this.checkMinQueryLength(querySinh, query)) return;
         if (querySinh == this.prevQuerySinh) { return; }
         this.prevQuerySinh = querySinh;
         this.prevQuery = query;

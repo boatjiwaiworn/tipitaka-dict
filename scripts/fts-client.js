@@ -71,7 +71,7 @@ export class FTSClient extends SearchPane {
         const termStr = SearchPane.normalizeSearchTerm(searchBarVal);
 
         const termsStrSinh = TextProcessor.convertFromMixed(termStr); // convert to sinhala here
-        if (!this.checkMinQueryLength(termsStrSinh)) return;
+        if (!this.checkMinQueryLength(termsStrSinh, termStr)) return;
         const terms = termsStrSinh.split(' ')
         if (!this.checkTerms(terms)) return;
 

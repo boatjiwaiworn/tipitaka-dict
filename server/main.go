@@ -23,7 +23,7 @@ import (
 )
 
 var (
-	APPNAME     = "Tipitaka.app CST v2.0"
+	APPNAME     = "Tipitaka.app CST v1.1"
 	userBJTPath = ""
 	rootPath    = ""
 	exePath     = ""
